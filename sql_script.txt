@@ -1,0 +1,92 @@
+CREATE DATABASE OHANA
+
+USE OHANA
+
+
+CREATE TABLE dbo.usuario (
+id_usuario INT IDENTITY (1,1) PRIMARY KEY NOT NULL,
+nome_usuario VARCHAR(50) NOT NULL,
+sobrenome_usuario VARCHAR(50) NOT NULL,
+login_usuario VARCHAR(50) UNIQUE NOT NULL,
+senha_usuario VARCHAR(50) NOT NULL,
+id_endereco INT, 
+cpf_usuario VARCHAR(14),
+
+)
+CREATE TABLE dbo.doacao(
+id_doacao INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+tipo_doacao VARCHAR(20) NOT NULL,
+data_doacao DATETIME NOT NULL,
+id_usuario INT NOT NULL,
+id_ong INT 
+)
+
+CREATE TABLE dbo.ong (
+id_ong INT IDENTITY (1,1) PRIMARY KEY NOT NULL,
+nome_ong VARCHAR(50) NOT NULL,
+login_ong VARCHAR(20) UNIQUE NOT NULL,
+senha_ong varchar(20) NOT NULL,
+id_endereco INT, 
+cnpj_ong VARCHAR(14)
+)
+
+CREATE TABLE dbo.endereco (
+id_endereco INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+rua VARCHAR(50) NOT NULL,
+numero INT NOT NULL,
+id_cep INT,
+complemento VARCHAR (50),
+)
+
+CREATE TABLE dbo.cep (
+id_cep INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+nome_rua VARCHAR(50) NOT NULL,
+bairro VARCHAR(16) NOT NULL,
+cidade VARCHAR(16) NOT NULL,
+estado VARCHAR(2) NOT NULL
+)
+
+CREATE TABLE dbo.adocao(
+id_doacao INT IDENTITY(1,1) PRIMARY KEY NOT NULL,
+porte VARCHAR(16) NOT NULL,
+peso DECIMAL NOT NULL,
+raca VARCHAR(16) NOT NULL,
+id_usuario INT, 
+id_ong INT
+)
+
+
+
+ALTER TABLE dbo.usuario ADD CONSTRAINT 
+fk_id_endereco_usuario FOREIGN KEY (id_endereco) REFERENCES dbo.endereco(id_endereco) 
+
+ALTER TABLE ong ADD CONSTRAINT
+fk_id_endereco_ong FOREIGN KEY(id_endereco) REFERENCES endereco(id_endereco)
+
+ALTER TABLE endereco ADD CONSTRAINT 
+fk_id_cep FOREIGN KEY (id_cep) REFERENCES cep(id_cep)
+
+ALTER TABLE doacao ADD CONSTRAINT 
+fk_id_usuario_doacao FOREIGN KEY(id_usuario) REFERENCES usuario(id_usuario)
+
+ALTER TABLE doacao ADD CONSTRAINT 
+fk_id_ong_doacao FOREIGN KEY (id_ong) REFERENCES ong (id_ong)
+
+ALTER TABLE adocao ADD CONSTRAINT 
+fk_id_usuario_adocao FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
+
+ALTER TABLE adocao ADD CONSTRAINT 
+fk_id_ong_adocao FOREIGN KEY (id_ong) REFERENCES ong(id_ong)
+
+
+CREATE SYMMETRIC KEY smk_cripto
+WITH ALGORITHM = AES_256 ENCRYPTION BY PASSWORD = 'carlinhos123'
+
+
+SELECT *FROM sys.symmetric_keys
+
+
+OPEN SYMMETRIC KEY smk_cripto DECRYPTION BY PASSWORD = 'carlinhos123'
+
+
+SELECT * FROM usuario
